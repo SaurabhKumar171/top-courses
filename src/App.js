@@ -5,12 +5,14 @@ import Cards from "./components/Cards";
 import {filterData,apiUrl} from "./data";
 import {toast} from "react-toastify";
 import Spinner from "./components/Spinner";
+import Error from "./components/Error";
 
 const App = () => {
 
       const [courses , setCourses] = useState([]);
       const [loading ,setLoading] = useState(true);
       const [category ,setCategory] = useState(filterData[0].title);
+      const [failures, setFailures] = useState(false);
 
      async function fetchData() {
         setLoading(true);
@@ -19,10 +21,12 @@ const App = () => {
             let output = await response.json();
 
             setCourses(output.data);
+            setFailures(false);
          }
 
          catch(error){
           toast.error('Network ka scene hai koi');
+          setFailures(true);
          }
          setLoading(false);
     }
@@ -30,6 +34,10 @@ const App = () => {
     useEffect ( () =>{
       fetchData();
     },[])
+
+    if(failures){
+       return (<Error />);
+    }
 
   return (<div className="min-h-screen flex flex-col bg-bgDark2">
         <Navbar />
